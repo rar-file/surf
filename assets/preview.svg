@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#111118"/>
+      <stop offset="100%" stop-color="#0a0a0e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <clipPath id="frame">
+      <rect width="960" height="540" rx="12"/>
+    </clipPath>
+  </defs>
+
+  <rect width="960" height="540" rx="12" fill="#0a0a0e"/>
+
+  <!-- ── Sidebar ── -->
+  <rect x="0" y="0" width="220" height="540" fill="#111118" clip-path="url(#frame)"/>
+  <rect x="220" y="0" width="1" height="540" fill="#ffffff" fill-opacity="0.07"/>
+
+  <!-- Sidebar header -->
+  <text x="20" y="36" font-family="'SF Mono',Consolas,monospace" font-size="18"
+        font-weight="700" fill="#818cf8" letter-spacing="1">SURF</text>
+  <text x="68" y="36" font-family="'Inter',Arial,sans-serif" font-size="9"
+        fill="#52525b" letter-spacing="2">AI</text>
+
+  <!-- Sidebar labels -->
+  <text x="16" y="68" font-family="'Inter',Arial,sans-serif" font-size="8"
+        font-weight="600" fill="#52525b" letter-spacing="1.2">PROVIDER</text>
+  <rect x="16" y="74" width="190" height="24" rx="6" fill="#18181f" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+  <text x="26" y="90" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#a1a1aa">Ollama (local)</text>
+
+  <text x="16" y="116" font-family="'Inter',Arial,sans-serif" font-size="8"
+        font-weight="600" fill="#52525b" letter-spacing="1.2">CHAT MODEL</text>
+  <rect x="16" y="122" width="190" height="24" rx="6" fill="#18181f" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+  <text x="26" y="138" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#a1a1aa">llama3.2</text>
+
+  <text x="16" y="164" font-family="'Inter',Arial,sans-serif" font-size="8"
+        font-weight="600" fill="#52525b" letter-spacing="1.2">FEATURES</text>
+
+  <!-- Toggle rows -->
+  <g transform="translate(0, 170)">
+    <text x="16" y="16" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#71717a">Web Search</text>
+    <rect x="170" y="4" width="32" height="16" rx="8" fill="#4ade80" opacity="0.9"/>
+    <circle cx="194" cy="12" r="6" fill="white"/>
+
+    <text x="16" y="38" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#71717a">Agent Mode</text>
+    <rect x="170" y="26" width="32" height="16" rx="8" fill="#282832"/>
+    <circle cx="178" cy="34" r="6" fill="#52525b"/>
+
+    <text x="16" y="60" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#71717a">Streaming</text>
+    <rect x="170" y="48" width="32" height="16" rx="8" fill="#818cf8" opacity="0.9"/>
+    <circle cx="194" cy="56" r="6" fill="white"/>
+  </g>
+
+  <!-- Memory section -->
+  <text x="16" y="268" font-family="'Inter',Arial,sans-serif" font-size="8"
+        font-weight="600" fill="#52525b" letter-spacing="1.2">MEMORY</text>
+  <rect x="16" y="274" width="190" height="60" rx="6" fill="#18181f" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+  <text x="26" y="291" font-family="'Inter',Arial,sans-serif" font-size="9" fill="#71717a">Global  </text>
+  <rect x="64" y="283" width="16" height="12" rx="6" fill="#818cf8" opacity="0.2"/>
+  <text x="67" y="292" font-family="'Inter',Arial,sans-serif" font-size="8" fill="#818cf8">3</text>
+  <text x="26" y="308" font-family="'Inter',Arial,sans-serif" font-size="8" fill="#52525b">Python dev, prefers concise answers…</text>
+  <text x="26" y="322" font-family="'Inter',Arial,sans-serif" font-size="8" fill="#52525b">Uses dark mode always…</text>
+
+  <!-- ── Topbar ── -->
+  <rect x="221" y="0" width="739" height="44" fill="#111118"/>
+  <rect x="221" y="44" width="739" height="1" fill="#ffffff" fill-opacity="0.07"/>
+  <text x="240" y="27" font-family="'Inter',Arial,sans-serif" font-size="13"
+        font-weight="500" fill="#d4d4d8">New chat</text>
+
+  <!-- Topbar buttons -->
+  <g transform="translate(700, 9)">
+    <rect width="52" height="26" rx="6" fill="#1f1f28" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <text x="26" y="17" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#a1a1aa">📊 Stats</text>
+  </g>
+  <g transform="translate(758, 9)">
+    <rect width="60" height="26" rx="6" fill="#1f1f28" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <text x="30" y="17" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#a1a1aa">🧠 Memory</text>
+  </g>
+  <g transform="translate(824, 9)">
+    <rect width="78" height="26" rx="6" fill="#1f1f28" stroke="#818cf8" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="39" y="17" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#818cf8">📄 Summarize</text>
+  </g>
+
+  <!-- ── Chat area ── -->
+  <!-- User message -->
+  <g transform="translate(236, 60)">
+    <!-- Web search pill -->
+    <rect x="340" y="14" width="120" height="20" rx="10" fill="#4ade80" fill-opacity="0.1" stroke="#4ade80" stroke-opacity="0.25" stroke-width="1"/>
+    <text x="400" y="27" text-anchor="middle" font-family="'Inter',Arial,sans-serif"
+          font-size="9" fill="#4ade80">🔍 web search · 3 results</text>
+
+    <!-- Assistant bubble -->
+    <rect x="0" y="44" width="680" height="90" rx="10" fill="#18181f" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+    <text x="18" y="66" font-family="'Inter',Arial,sans-serif" font-size="11" font-weight="600" fill="#818cf8">SURF</text>
+    <text x="18" y="84" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#d4d4d8">Based on my search, here are the top Python async patterns for 2026:</text>
+    <text x="18" y="100" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#a1a1aa">  • asyncio.TaskGroup for structured concurrency</text>
+    <text x="18" y="116" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#a1a1aa">  • anyio for backend-agnostic async code</text>
+    <text x="18" y="124" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#52525b">  Sources: realpython.com · docs.python.org · github.com/python-trio</text>
+
+    <!-- User message -->
+    <rect x="460" y="150" width="220" height="36" rx="10" fill="#1f1f28" stroke="#818cf8" stroke-opacity="0.2" stroke-width="1"/>
+    <text x="570" y="172" text-anchor="middle" font-family="'Inter',Arial,sans-serif"
+          font-size="11" fill="#fafafa">Can you give a code example?</text>
+
+    <!-- Code block response -->
+    <rect x="0" y="200" width="680" height="160" rx="10" fill="#111118" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+    <rect x="0" y="200" width="680" height="28" rx="10" fill="#1f1f28"/>
+    <rect x="0" y="218" width="680" height="10" fill="#1f1f28"/>
+    <text x="18" y="219" font-family="'Inter',Arial,sans-serif" font-size="9" fill="#52525b">python</text>
+    <text x="640" y="219" font-family="'Inter',Arial,sans-serif" font-size="9" fill="#52525b">Copy</text>
+
+    <text x="18" y="248" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#818cf8">import</text>
+    <text x="62" y="248" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#d4d4d8"> asyncio</text>
+    <text x="18" y="266" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#818cf8">async def</text>
+    <text x="80" y="266" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#4ade80"> fetch_all</text>
+    <text x="164" y="266" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#d4d4d8">(urls):</text>
+    <text x="18" y="284" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#d4d4d8">    </text>
+    <text x="36" y="284" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#818cf8">async with</text>
+    <text x="118" y="284" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#d4d4d8"> asyncio.TaskGroup() </text>
+    <text x="268" y="284" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#818cf8">as</text>
+    <text x="286" y="284" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#d4d4d8"> tg:</text>
+    <text x="18" y="302" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#71717a">        tasks = [tg.create_task(fetch(u)) for u in urls]</text>
+    <text x="18" y="320" font-family="'SF Mono','Fira Code',Consolas,monospace" font-size="11" fill="#71717a">        return [t.result() for t in tasks]</text>
+    <text x="18" y="350" font-family="'Inter',Arial,sans-serif" font-size="10" fill="#52525b">✦ 312 tokens · 48 t/s · gemma3:27b</text>
+  </g>
+
+  <!-- ── Input bar ── -->
+  <rect x="221" y="490" width="739" height="50" fill="#0e0e16"/>
+  <rect x="221" y="490" width="739" height="1" fill="#ffffff" fill-opacity="0.07"/>
+  <rect x="248" y="504" width="640" height="30" rx="8" fill="#18181f" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+  <text x="270" y="523" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#52525b">Message SURF…</text>
+  <rect x="862" y="504" width="30" height="30" rx="8" fill="#818cf8"/>
+  <text x="877" y="523" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="white">↑</text>
+
+  <!-- Outer border -->
+  <rect width="960" height="540" rx="12" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+</svg>

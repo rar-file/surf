@@ -1,0 +1,14 @@
+# AI Web Search Skill - Dependencies
+# Install with: pip install -r requirements.txt
+
+playwright>=1.40.0
+ddgs>=7.0.0
+rich>=13.0.0\nprompt_toolkit>=3.0.0
+flask>=3.0.0
+anthropic>=0.40.0
+openai>=1.50.0
+pyyaml>=6.0
+Pillow>=10.0.0
+rapidocr-onnxruntime>=1.4.0
+pytesseract>=0.3.10
+mcp>=1.0.0
