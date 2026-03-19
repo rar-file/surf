@@ -78,7 +78,7 @@ class TavilyBackend:
                     "url": r.get("url", ""),
                     "snippet": r.get("content", ""),
                     "date": r.get("published_date", ""),
-                    "source": "",
+                    "source": r.get("source", ""),
                     "position": i + 1,
                 })
             return results
@@ -132,8 +132,11 @@ class AISearch:
         self._tavily = None
         if self._provider_name == "tavily":
             api_key = os.environ.get("TAVILY_API_KEY", "")
-            if api_key:
-                self._tavily = TavilyBackend(api_key)
+            if not api_key:
+                raise ValueError(
+                    "TAVILY_API_KEY environment variable is required when provider='tavily'"
+                )
+            self._tavily = TavilyBackend(api_key)
     
     def search(self, query: str, num_results: int = 10) -> List[SearchResult]:
         """
@@ -177,6 +180,49 @@ class AISearch:
             print(f"Search error: {e}")
             return []
     
+    def news_search(self, query: str, num_results: int = 10) -> List[dict]:
+        """
+        Search for latest news.
+
+        Uses Tavily when configured, otherwise DuckDuckGo.
+
+        Args:
+            query: What to search for
+            num_results: How many results (max ~25)
+
+        Returns:
+            List of dicts with title, url, snippet, date, source, position
+        """
+        if self._tavily:
+            return self._tavily.news_search(query, num_results)
+
+        try:
+            try:
+                from ddgs import DDGS
+            except ImportError:
+                from duckduckgo_search import DDGS
+
+            results = []
+            with DDGS() as ddgs:
+                for i, r in enumerate(ddgs.news(query, max_results=num_results)):
+                    results.append({
+                        'title': r.get('title', ''),
+                        'url': r.get('url', r.get('link', '')),
+                        'snippet': r.get('body', r.get('excerpt', '')),
+                        'date': r.get('date', ''),
+                        'source': r.get('source', ''),
+                        'position': i + 1
+                    })
+
+            return results
+
+        except ImportError:
+            print("Please install: pip install ddgs")
+            return []
+        except Exception:
+            # DecodeError / network errors — fall back to regular search
+            return [asdict(r) for r in self.search(query, num_results)]
+
     async def _init_browser(self):
         """Start browser for page fetching"""
         if self._browser is None:
@@ -384,40 +430,8 @@ def news_search(query: str, num_results: int = 10, provider: str = "auto") -> Li
         for r in results:
             print(r['title'], r['date'], r['url'])
     """
-    resolved = _resolve_search_provider(provider)
-    if resolved == "tavily":
-        api_key = os.environ.get("TAVILY_API_KEY", "")
-        if api_key:
-            backend = TavilyBackend(api_key)
-            return backend.news_search(query, num_results)
-
-    try:
-        try:
-            from ddgs import DDGS
-        except ImportError:
-            from duckduckgo_search import DDGS
-
-        results = []
-        with DDGS() as ddgs:
-            # Use news search for latest results
-            for i, r in enumerate(ddgs.news(query, max_results=num_results)):
-                results.append({
-                    'title': r.get('title', ''),
-                    'url': r.get('url', r.get('link', '')),
-                    'snippet': r.get('body', r.get('excerpt', '')),
-                    'date': r.get('date', ''),
-                    'source': r.get('source', ''),
-                    'position': i + 1
-                })
-
-        return results
-
-    except ImportError:
-        print("Please install: pip install ddgs")
-        return []
-    except Exception:
-        # DecodeError / network errors — silently fall back to regular search
-        return search(query, num_results)
+    ai = AISearch(provider=provider)
+    return ai.news_search(query, num_results)
 
 
 def fetch(url: str) -> str:
