@@ -108,6 +108,7 @@ class Config:
     api_key: Optional[str] = None
     api_base: Optional[str] = None
     web_search: bool = False
+    search_provider: str = "auto"  # 'auto', 'tavily', or 'duckduckgo'
     thinking: bool = True
     streaming: bool = True
     agent_mode: bool = False
@@ -1062,11 +1063,11 @@ class SurfCLI:
         
         try:
             # Try news search first for latest results
-            results = news_search(query, num_results=5)
-            
+            results = news_search(query, num_results=5, provider=self.config.search_provider)
+
             # Fallback to regular search if no news found
             if not results:
-                results = search(query, num_results=5)
+                results = search(query, num_results=5, provider=self.config.search_provider)
             
             if results:
                 self.console.print(f" [dim]found {len(results)} results[/]")
@@ -1104,7 +1105,7 @@ class SurfCLI:
         for i, query in enumerate(search_angles, 1):
             self.console.print(f"   [dim]  [{i}/{len(search_angles)}] {query[:50]}...[/]" if len(query) > 50 else f"   [dim]  [{i}/{len(search_angles)}] {query}[/]")
             try:
-                results = search(query, num_results=3)
+                results = search(query, num_results=3, provider=self.config.search_provider)
                 for r in results:
                     # Avoid duplicates by URL
                     if not any(existing.get('url') == r.get('url') for existing in all_results):
@@ -1622,6 +1623,10 @@ Examples:
     parser.add_argument("-k", "--key", help="API key")
     parser.add_argument("-u", "--url", help="Custom API URL")
     parser.add_argument("--search", "-s", action="store_true", help="Enable web search")
+    parser.add_argument("--search-provider",
+                        choices=["auto", "tavily", "duckduckgo"],
+                        default="auto",
+                        help="Search provider: auto (Tavily if TAVILY_API_KEY set, else DuckDuckGo), tavily, or duckduckgo")
     parser.add_argument("--no-think", action="store_true", help="Disable thinking")
     
     args = parser.parse_args()
@@ -1649,6 +1654,7 @@ Examples:
         config.api_base = args.url
     if args.search:
         config.web_search = True
+    config.search_provider = args.search_provider
     if args.no_think:
         config.thinking = False
     
