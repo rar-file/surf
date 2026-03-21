@@ -12,4 +12,3 @@ Pillow>=10.0.0
 rapidocr-onnxruntime>=1.4.0
 pytesseract>=0.3.10
 mcp>=1.0.0
-tavily-python>=0.3.0
