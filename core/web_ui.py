@@ -1440,6 +1440,7 @@ def api_chat():
         search_context = ""
         search_results = []
         search_query = user_input  # what we actually search for
+        raw_query = user_input.split('\n')[0].strip()[:200]
         # When toggle is on, auto-detect from query. When off, no search.
         if _config.web_search:
             mode, is_news = _search_mode(user_input)
@@ -1448,7 +1449,7 @@ def api_chat():
         if mode != "NO":
             # (#2) Rewrite query for better search results
             search_query = _rewrite_search_query(user_input, convo.get("messages", []), ocr_text=ocr_text)
-            yield _sse({"type": "search_start", "query": search_query})
+            yield _sse({"type": "search_start", "query": search_query, "original": raw_query, "mode": mode})
             try:
                 # (#1) Use general search by default, news only for time-sensitive
                 results = _cached_search(search_query, num_results=5, use_news=is_news)
@@ -1525,7 +1526,13 @@ def api_chat():
             yield _sse({"type": "memory_stored", "facts": [{"tier": t, "fact": f} for t, f in mem_stored]})
 
         if search_results:
-            convo["messages"].append({"role": "search", "content": json.dumps(search_results)})
+            convo["messages"].append({
+                "role": "search",
+                "content": json.dumps(search_results),
+                "query": search_query,
+                "original_query": raw_query if mode != "NO" else "",
+                "mode": mode,
+            })
 
         chat_fn = _get_chat_fn(effective_model)
         full = ""
