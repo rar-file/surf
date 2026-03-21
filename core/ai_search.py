@@ -11,7 +11,6 @@ Usage:
     info = research("what is machine learning")
 """
 
-import os
 import re
 from dataclasses import dataclass, asdict
 from typing import Optional, List
@@ -36,131 +35,45 @@ class PageContent:
     error: Optional[str] = None
 
 
-class TavilyBackend:
-    """Search backend using Tavily API."""
-
-    def __init__(self, api_key: str):
-        from tavily import TavilyClient
-        self.client = TavilyClient(api_key=api_key)
-
-    def search(self, query: str, num_results: int = 10) -> List[SearchResult]:
-        try:
-            response = self.client.search(
-                query=query,
-                max_results=num_results,
-                search_depth="basic",
-            )
-            results = []
-            for i, r in enumerate(response.get("results", [])):
-                results.append(SearchResult(
-                    title=r.get("title", ""),
-                    url=r.get("url", ""),
-                    snippet=r.get("content", ""),
-                    position=i + 1,
-                ))
-            return results
-        except Exception as e:
-            print(f"Tavily search error: {e}")
-            return []
-
-    def news_search(self, query: str, num_results: int = 10) -> List[dict]:
-        try:
-            response = self.client.search(
-                query=query,
-                max_results=num_results,
-                search_depth="basic",
-                topic="news",
-            )
-            results = []
-            for i, r in enumerate(response.get("results", [])):
-                results.append({
-                    "title": r.get("title", ""),
-                    "url": r.get("url", ""),
-                    "snippet": r.get("content", ""),
-                    "date": r.get("published_date", ""),
-                    "source": r.get("source", ""),
-                    "position": i + 1,
-                })
-            return results
-        except Exception as e:
-            print(f"Tavily news search error: {e}")
-            return []
-
-
-def _resolve_search_provider(provider: str = "auto") -> str:
-    """Resolve which search provider to use.
-
-    Args:
-        provider: 'auto', 'tavily', or 'duckduckgo'
-
-    Returns:
-        'tavily' or 'duckduckgo'
-    """
-    if provider == "tavily":
-        return "tavily"
-    if provider == "duckduckgo":
-        return "duckduckgo"
-    # auto – prefer Tavily when API key is available
-    if os.environ.get("TAVILY_API_KEY"):
-        return "tavily"
-    return "duckduckgo"
-
-
 class AISearch:
     """
     Free AI Web Search - No API Keys!
-
+    
     Features:
     - DuckDuckGo search (unlimited, free)
-    - Tavily search (when TAVILY_API_KEY is set)
     - Full page content fetching
     - Clean text extraction
     - Perfect for AI/LLM tools
     """
-
-    def __init__(self, headless: bool = True, provider: str = "auto"):
+    
+    def __init__(self, headless: bool = True):
         """
         Args:
             headless: Hide browser (True) or show window (False)
-            provider: Search provider – 'auto', 'tavily', or 'duckduckgo'
         """
         self.headless = headless
         self._browser = None
         self._page = None
         self._playwright = None
-        self._provider_name = _resolve_search_provider(provider)
-        self._tavily = None
-        if self._provider_name == "tavily":
-            api_key = os.environ.get("TAVILY_API_KEY", "")
-            if not api_key:
-                raise ValueError(
-                    "TAVILY_API_KEY environment variable is required when provider='tavily'"
-                )
-            self._tavily = TavilyBackend(api_key)
     
     def search(self, query: str, num_results: int = 10) -> List[SearchResult]:
         """
-        Search the web.
-
-        Uses Tavily when configured, otherwise DuckDuckGo.
-
+        Search the web using DuckDuckGo.
+        
         Args:
             query: What to search for
             num_results: How many results (max ~25)
-
+            
         Returns:
             List of SearchResult objects
         """
-        if self._tavily:
-            return self._tavily.search(query, num_results)
-
         try:
             # Try new package name first
             try:
                 from ddgs import DDGS
             except ImportError:
                 from duckduckgo_search import DDGS
-
+            
             results = []
             with DDGS() as ddgs:
                 for i, r in enumerate(ddgs.text(query, max_results=num_results)):
@@ -170,9 +83,9 @@ class AISearch:
                         snippet=r.get('body', r.get('snippet', '')),
                         position=i + 1
                     ))
-
+            
             return results
-
+            
         except ImportError:
             print("Please install: pip install ddgs")
             return []
@@ -180,49 +93,6 @@ class AISearch:
             print(f"Search error: {e}")
             return []
     
-    def news_search(self, query: str, num_results: int = 10) -> List[dict]:
-        """
-        Search for latest news.
-
-        Uses Tavily when configured, otherwise DuckDuckGo.
-
-        Args:
-            query: What to search for
-            num_results: How many results (max ~25)
-
-        Returns:
-            List of dicts with title, url, snippet, date, source, position
-        """
-        if self._tavily:
-            return self._tavily.news_search(query, num_results)
-
-        try:
-            try:
-                from ddgs import DDGS
-            except ImportError:
-                from duckduckgo_search import DDGS
-
-            results = []
-            with DDGS() as ddgs:
-                for i, r in enumerate(ddgs.news(query, max_results=num_results)):
-                    results.append({
-                        'title': r.get('title', ''),
-                        'url': r.get('url', r.get('link', '')),
-                        'snippet': r.get('body', r.get('excerpt', '')),
-                        'date': r.get('date', ''),
-                        'source': r.get('source', ''),
-                        'position': i + 1
-                    })
-
-            return results
-
-        except ImportError:
-            print("Please install: pip install ddgs")
-            return []
-        except Exception:
-            # DecodeError / network errors — fall back to regular search
-            return [asdict(r) for r in self.search(query, num_results)]
-
     async def _init_browser(self):
         """Start browser for page fetching"""
         if self._browser is None:
@@ -257,7 +127,7 @@ class AISearch:
         return asyncio.run(self._fetch_page_async(url, timeout))
     
     async def search_async(self, query: str, num_results: int = 10) -> List[SearchResult]:
-        """Async search (wraps sync search for use in async contexts)."""
+        """Async search (wraps sync DDGS search for use in async contexts)."""
         return self.search(query, num_results)
 
     async def fetch_page_async(self, url: str, timeout: int = 30000) -> PageContent:
@@ -401,37 +271,58 @@ class AISearch:
 # EASY FUNCTIONS - Just import and use!
 # ============================================================
 
-def search(query: str, num_results: int = 10, provider: str = "auto") -> List[dict]:
+def search(query: str, num_results: int = 10) -> List[dict]:
     """
     Quick search - easiest way to search!
-
-    Uses Tavily when TAVILY_API_KEY is set (or provider='tavily'), otherwise DuckDuckGo.
-
+    
     Example:
         from ai_search import search
         results = search("Python tutorials")
         for r in results:
             print(r['title'], r['url'])
     """
-    ai = AISearch(provider=provider)
+    ai = AISearch()
     results = ai.search(query, num_results)
     return [asdict(r) for r in results]
 
 
-def news_search(query: str, num_results: int = 10, provider: str = "auto") -> List[dict]:
+def news_search(query: str, num_results: int = 10) -> List[dict]:
     """
     Search for LATEST news - gets recent results!
-
-    Uses Tavily when TAVILY_API_KEY is set (or provider='tavily'), otherwise DuckDuckGo.
-
+    
     Example:
         from ai_search import news_search
         results = news_search("Anthropic AI updates")
         for r in results:
             print(r['title'], r['date'], r['url'])
     """
-    ai = AISearch(provider=provider)
-    return ai.news_search(query, num_results)
+    try:
+        try:
+            from ddgs import DDGS
+        except ImportError:
+            from duckduckgo_search import DDGS
+        
+        results = []
+        with DDGS() as ddgs:
+            # Use news search for latest results
+            for i, r in enumerate(ddgs.news(query, max_results=num_results)):
+                results.append({
+                    'title': r.get('title', ''),
+                    'url': r.get('url', r.get('link', '')),
+                    'snippet': r.get('body', r.get('excerpt', '')),
+                    'date': r.get('date', ''),
+                    'source': r.get('source', ''),
+                    'position': i + 1
+                })
+        
+        return results
+        
+    except ImportError:
+        print("Please install: pip install ddgs")
+        return []
+    except Exception:
+        # DecodeError / network errors — silently fall back to regular search
+        return search(query, num_results)
 
 
 def fetch(url: str) -> str:

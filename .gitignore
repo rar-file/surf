@@ -1,6 +1,4 @@
-.migration-plan-*.md
-
-.reimpl-*.md
-
 __pycache__/
 *.pyc
+.migration-plan-*.md
+.reimpl-*.md

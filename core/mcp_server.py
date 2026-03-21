@@ -10,7 +10,6 @@ Setup:
 
 import asyncio
 import json
-import os
 from typing import Any
 
 try:
@@ -33,8 +32,7 @@ def get_skill() -> AISearch:
     """Get or create the AISearch instance"""
     global _skill
     if _skill is None:
-        provider = os.environ.get("SEARCH_PROVIDER", "auto")
-        _skill = AISearch(headless=True, provider=provider)
+        _skill = AISearch(headless=True)
     return _skill
 
 
@@ -115,7 +113,7 @@ def create_server():
         return [
             Tool(
                 name="web_search",
-                description="Search the web using DuckDuckGo or Tavily (when TAVILY_API_KEY is set). Returns titles, URLs, and snippets for search results. Use this to find information on any topic.",
+                description="Search the web using DuckDuckGo. Returns titles, URLs, and snippets for search results. Use this to find information on any topic.",
                 inputSchema={
                     "type": "object",
                     "properties": {
