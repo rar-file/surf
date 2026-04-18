@@ -132,7 +132,12 @@ Upload images in the web UI or attach via `/image` in the CLI. A dedicated visio
 SURF now keeps local runtime state under `.surf/` by default instead of cluttering the project root.
 You can override the location with `SURF_DATA_DIR=/path/to/data`.
 
+This makes first-run and cleanup more predictable, especially when switching machines or testing multiple setups.
+
 ## Quick Start
+
+If you want the shortest possible path from clone to working app, see `docs/FIRST_RUN.md`.
+
 
 ### Windows
 
@@ -154,6 +159,10 @@ source venv/bin/activate          # Windows: .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 playwright install chromium
 ```
+
+### Environment variables
+
+See `.env.example` for the supported key names and runtime data override.
 
 ### Run — CLI
 
