@@ -127,6 +127,11 @@ Upload images in the web UI or attach via `/image` in the CLI. A dedicated visio
 - `core/browser_agent.py` — browser automation path
 - `skills/` — optional markdown-driven extensions
 
+## Runtime state
+
+SURF now keeps local runtime state under `.surf/` by default instead of cluttering the project root.
+You can override the location with `SURF_DATA_DIR=/path/to/data`.
+
 ## Quick Start
 
 ### Windows
@@ -241,7 +246,7 @@ Screenshots of each step are saved to `agent_screenshots/`.
 
 SURF maintains two memory scopes:
 
-- **Global** — persisted in `surf_memory.json`, available in every conversation
+- **Global** — persisted in `.surf/surf_memory.json` by default, available in every conversation
 - **Session** — auto-extracted during the chat, cleared when the conversation ends
 
 Manage memories from the web sidebar, the Memory topbar button, or the `/clear` command. Facts are deduplicated automatically.
@@ -306,7 +311,7 @@ export OPENAI_API_KEY=sk-...
 export OPENROUTER_API_KEY=sk-or-...
 ```
 
-Keys are stored locally in `surf_keys.json` when set with `/key`.
+Keys are stored locally in `.surf/surf_keys.json` when set with `/key`.
 
 ---
 
@@ -332,10 +337,11 @@ surf/
 │   └── js/app.js
 ├── assets/                 ← README graphics
 ├── agent_screenshots/      ← Browser agent step captures
-├── surf_chats.json         ← Saved conversations
-├── surf_memory.json        ← Persistent memory facts
-├── surf_stats.json         ← Usage analytics
-└── surf_keys.json          ← Stored API keys
+├── .surf/
+│   ├── surf_chats.json     ← Saved conversations
+│   ├── surf_memory.json    ← Persistent memory facts
+│   ├── surf_stats.json     ← Usage analytics
+│   └── surf_keys.json      ← Stored API keys
 ```
 
 ---

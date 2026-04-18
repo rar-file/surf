@@ -1,5 +1,5 @@
 """
-SURF Web UI — local web interface for SURF chat.
+SURF Web UI - local web interface for SURF chat.
 
 Launch from CLI with /web, or run directly: python web_ui.py
 """
@@ -24,6 +24,7 @@ from .surf import (
     _is_vision_model,
 )
 from .ai_search import search, news_search, fetch
+from .state import data_file
 
 # ════════════════════════════════════════════════════════════════
 # FLASK APP
@@ -39,12 +40,12 @@ _ROOT = Path(__file__).resolve().parent.parent
 _config = Config()
 
 # Chat history: list of conversations
-# Each: {"id": str, "title": str, "created": float, "messages": [...]}
+# Each: {"id": str, "title": str, "created": float, "messages": [...]} 
 _conversations: list = []
 _active_id: str | None = None
-_CHAT_FILE = _ROOT / "surf_chats.json"
-_MEMORY_FILE = _ROOT / "surf_memory.json"
-_KEYS_FILE = _ROOT / "surf_keys.json"
+_CHAT_FILE = data_file("surf_chats.json")
+_MEMORY_FILE = data_file("surf_memory.json")
+_KEYS_FILE = data_file("surf_keys.json")
 
 # ── Saved API keys (per-provider) ─────────────────────────────
 # {"anthropic": "sk-...", "openai": "sk-...", "openrouter": "sk-...", "custom": "sk-..."}
@@ -59,7 +60,7 @@ _search_cache: dict[str, tuple[list, float]] = {}
 _CACHE_TTL = 300  # 5 minutes
 
 # ── Aggregate stats ───────────────────────────────────────────
-_STATS_FILE = _ROOT / "surf_stats.json"
+_STATS_FILE = data_file("surf_stats.json")
 _agg_stats: dict = {"total_messages": 0, "total_tokens": 0, "total_reasoning_tokens": 0,
                      "total_searches": 0, "total_time_s": 0.0, "requests": []}
 
@@ -283,7 +284,7 @@ def _rewrite_search_query(user_input: str, conversation_messages: list, ocr_text
         user_input.split('\n')[0].strip(), re.IGNORECASE
     )
     if vague and ocr_text:
-        # OCR text IS the search query — take the most meaningful part
+        # OCR text IS the search query - take the most meaningful part
         clean_ocr = ocr_text.strip()[:200]
         if len(clean_ocr.split()) <= 8:
             return clean_ocr
@@ -735,7 +736,7 @@ def api_agent():
 
     from .browser_agent import run_agent_loop
 
-    # Determine which model to use — prefer dedicated vision model, fall back to main model
+    # Determine which model to use - prefer dedicated vision model, fall back to main model
     agent_model = _config.vision_model or _config.model
     has_vision = _is_vision_model(agent_model)
     # Build chat function
@@ -1197,7 +1198,7 @@ def api_conversations_summarize():
     data = request.get_json() or {}
     save_to_memory = bool(data.get("save_to_memory", False))
 
-    # Build a transcript — cap to last 40 messages to stay within context
+    # Build a transcript - cap to last 40 messages to stay within context
     transcript_parts = []
     for m in msgs[-40:]:
         role = "User" if m["role"] == "user" else "Assistant"
@@ -1284,7 +1285,7 @@ def api_chat():
         import re
         q = query.lower().strip()
 
-        # ── Explicit "don't search" directives — HIGHEST PRIORITY ──
+        # ── Explicit "don't search" directives - HIGHEST PRIORITY ──
         NO_SEARCH = re.compile(
             r'('
             r'don.?t (search|look.?up|google|browse|surf|use.{0,10}(web|internet|search))|'
@@ -1301,7 +1302,7 @@ def api_chat():
         if NO_SEARCH.search(q):
             return ("NO", False)
 
-        # ── Skip patterns — things that NEVER need search ──
+        # ── Skip patterns - things that NEVER need search ──
         SKIP = re.compile(
             r'^('
             r'(write|create|generate|make) (me )?(a |an )?(poem|haiku|story|song|joke|limerick|essay|code|function|class|script)|'
@@ -1316,7 +1317,7 @@ def api_chat():
         if SKIP.search(q):
             return ("NO", False)
 
-        # ── Thinking / reasoning / puzzle requests — no search needed ──
+        # ── Thinking / reasoning / puzzle requests - no search needed ──
         THINK_ONLY = re.compile(
             r'\b('
             r'think (about|through|step)|reason|reasoning|logic|logical|'
@@ -1383,7 +1384,7 @@ def api_chat():
         if FACTUAL.search(q):
             return ("HEADLINES", False)
 
-        # ── Questions ending with ? — only if they look like they need web info ──
+        # ── Questions ending with ? - only if they look like they need web info ──
         # Very specific factual questions (not rhetorical or reasoning questions)
         if q.rstrip().endswith('?') and len(q) > 30:
             # Skip if it looks like a reasoning/opinion question
@@ -1507,7 +1508,7 @@ def api_chat():
                 system += f"\n\n[Previous search context: the conversation was about '{last_topic}'. Use this context for follow-up questions.]"
         if search_context:
             system += (
-                "\n\nSEARCH RESULTS — YOU MUST USE THESE:\n"
+                "\n\nSEARCH RESULTS - YOU MUST USE THESE:\n"
                 "The following are real, current web search results. "
                 "Base your answer on these results. Cite the source names.\n"
                 + search_context
@@ -1551,15 +1552,15 @@ def api_chat():
 
             think_system = (
                 "You are a reasoning engine. Analyze the user's question step by step.\n"
-                "Be CONCISE — use short bullet points, not long paragraphs.\n"
+                "Be CONCISE - use short bullet points, not long paragraphs.\n"
                 "Cover the key reasoning steps, then STOP. Do not over-explain.\n"
-                "Output your reasoning process ONLY — no final answer.\n"
+                "Output your reasoning process ONLY - no final answer.\n"
                 "Do NOT start with phrases like 'Let me think' or 'I'll reason through this'.\n"
                 "Just start reasoning directly. Keep it under 300 words."
             )
             if search_context:
                 think_system += (
-                    "\n\nYou have web search results available — USE them in your reasoning:\n"
+                    "\n\nYou have web search results available - USE them in your reasoning:\n"
                     + search_context
                 )
 
@@ -1618,7 +1619,7 @@ def api_chat():
         api_msgs.extend(trimmed_msgs)
 
         if not should_think:
-            # Single pass — still support native <think> tags for models that have them
+            # Single pass - still support native <think> tags for models that have them
             if _config.thinking:
                 system += "\n\n" + THINKING_INSTRUCTIONS
                 trimmed_msgs = _trim_messages_to_fit(_config.messages, system, model_ctx)
@@ -1643,7 +1644,7 @@ def api_chat():
                 first = next(gen, None)
 
             if not is_error:
-                # Stream all tokens (first may be None or empty — just continue to gen)
+                # Stream all tokens (first may be None or empty - just continue to gen)
                 def _all_chunks():
                     if first:
                         yield first
@@ -1789,7 +1790,7 @@ def api_chat():
                         "news, history, science, hypotheticals, games, riddles).\n"
                         "- Do NOT extract facts about characters in puzzles or scenarios (farmers, norwegians, etc).\n"
                         "- Do NOT extract the content of the conversation itself.\n"
-                        "- Do NOT extract facts from the assistant's response — only from what the USER said.\n"
+                        "- Do NOT extract facts from the assistant's response - only from what the USER said.\n"
                         "- If there is NOTHING personal about the user, reply with exactly: nothing\n"
                         "- Output ONLY the facts or 'nothing'. No explanations.\n\n"
                         "GOOD examples (extract these):\n"
@@ -1811,7 +1812,7 @@ def api_chat():
                     if len(mem_text) > 300:
                         break
                 mem_text = mem_text.strip()
-                # Parse response — "nothing" means skip
+                # Parse response - "nothing" means skip
                 if mem_text and mem_text.lower().strip().rstrip('.') != "nothing":
                     auto_facts = []
                     for line in mem_text.splitlines():

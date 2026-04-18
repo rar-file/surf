@@ -5,8 +5,5 @@ __pycache__/
 .migration-plan-*.md
 .reimpl-*.md
 agent_screenshots/
-surf_chats.json
-surf_keys.json
-surf_memory.json
-surf_stats.json
+.surf/
 venv/
