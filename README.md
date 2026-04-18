@@ -14,7 +14,7 @@
 <br/>
 
 **A self-hosted AI chat with a sleek web UI and a rich terminal CLI.**  
-Connect any model. Search the web for free. Automate your browser. Remember everything.
+Connect local or cloud models, search the web, automate a browser, and keep lightweight persistent memory.
 
 </div>
 
@@ -22,7 +22,20 @@ Connect any model. Search the web for free. Automate your browser. Remember ever
 
 # SURF — Search · Understand · Reason · Fast
 
-A self-hosted AI chat with a polished web UI and a rich CLI. Connect to any model — local or cloud — with free built-in web search, persistent memory, a browser automation agent, and a full analytics dashboard.
+A self-hosted AI chat with a polished web UI and CLI. SURF aims to be a practical local-first AI surface for trying models, web search, browser automation, and lightweight memory in one place.
+
+## What is stable today
+
+- Multi-provider chat via Ollama, Anthropic, OpenAI, OpenRouter, and compatible endpoints
+- Local web UI and terminal CLI
+- DuckDuckGo-based search and page fetching
+- Basic browser-agent and memory features
+
+## What is still evolving
+
+- Test coverage and CI depth
+- Runtime state/config separation
+- Reliability around advanced features like browser automation and research flows
 
 ---
 
@@ -104,6 +117,15 @@ Upload images in the web UI or attach via `/image` in the CLI. A dedicated visio
 </table>
 
 ---
+
+## Architecture at a glance
+
+- `core/surf.py` — main CLI runtime, provider selection, token/context helpers
+- `core/web_ui.py` — Flask web interface and local state handling
+- `core/ai_search.py` — DuckDuckGo search + page fetching helpers
+- `core/ai_tools.py` — wrappers for use with tool-calling frameworks
+- `core/browser_agent.py` — browser automation path
+- `skills/` — optional markdown-driven extensions
 
 ## Quick Start
 
