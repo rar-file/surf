@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================
-# 🚀 AI Web Search Skill - Quick Setup Script
+# 🚀 SURF - Quick Setup Script
 # ============================================================
 # Run this script to install everything you need!
 # Usage: chmod +x setup.sh && ./setup.sh
 # ============================================================
 
-echo "🔧 Setting up AI Web Search Skill..."
+echo "🔧 Setting up SURF..."
 echo ""
 
 # Check for Python
@@ -51,6 +51,6 @@ echo "2. Run SURF:"
 echo "   python chat.py"
 echo ""
 echo "3. Or launch the web UI:"
-echo "   python -m core.web_ui"
+echo "   python chat.py --web"
 echo ""
 echo "============================================================"
