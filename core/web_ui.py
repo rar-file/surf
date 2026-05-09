@@ -704,7 +704,8 @@ def api_models():
         return jsonify({"models": [], "note": "Only available for Ollama"})
     import urllib.request
     try:
-        req = urllib.request.Request("http://localhost:11434/api/tags")
+        base = _config.api_base or "http://localhost:11434"
+        req = urllib.request.Request(f"{base}/api/tags")
         with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode())
             models = []
@@ -921,8 +922,9 @@ def _trigger_warmup():
                 "prompt": "hi",
                 "options": {"num_predict": 1},
             }).encode()
+            base = _config.api_base or "http://localhost:11434"
             req = _ur.Request(
-                "http://localhost:11434/api/generate",
+                f"{base}/api/generate",
                 data=payload,
                 headers={"Content-Type": "application/json"},
             )
