@@ -290,7 +290,7 @@ Add a new skill by dropping a folder + `SKILL.md` into `skills/`.
 Expose SURF's search capabilities as tools for Claude Desktop or any MCP client:
 
 ```bash
-python core/mcp_server.py
+python -m core.mcp_server
 ```
 
 Tools: `web_search`, `fetch_webpage`, `web_research`
