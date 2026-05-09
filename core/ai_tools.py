@@ -54,9 +54,9 @@ def web_research(query: str) -> str:
         output += f"URL: {page['url']}\n"
         output += f"{'='*60}\n"
         
-        if page['full_content']:
-            output += page['full_content'][:3000]
-            if len(page['full_content']) > 3000:
+        if page['content']:
+            output += page['content'][:3000]
+            if len(page['content']) > 3000:
                 output += "\n...[content truncated]..."
         else:
             output += f"(Could not fetch content)\nSnippet: {page['snippet']}"
