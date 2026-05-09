@@ -46,9 +46,26 @@ except ImportError:
     from rich.box import ROUNDED
     from rich.markdown import Markdown
 
-from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.formatted_text import ANSI
+try:
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.completion import Completer, Completion
+    from prompt_toolkit.formatted_text import ANSI
+except ImportError:
+    # Provide lightweight stubs so the module can be imported in test environments
+    class PromptSession:
+        def __init__(self, *args, **kwargs):
+            pass
+        def prompt(self, *args, **kwargs):
+            raise RuntimeError("prompt_toolkit not installed")
+    class Completer:
+        pass
+    class Completion:
+        def __init__(self, text, start_position=0, display_meta=None):
+            self.text = text
+            self.start_position = start_position
+            self.display_meta = display_meta
+    class ANSI(str):
+        pass
 
 from .ai_search import search, news_search, research, fetch
 
